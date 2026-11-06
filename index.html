@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html>
+  
   <head>
     <meta charset="utf-8">
-    <!-- Mobile Optimization: Prevents zooming and scrolling issues on phones -->
+    
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Volcano Eruption AR</title>
-    
-    <!-- A-Frame Core (From Guide) -->
+
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <!-- AR.js (From Guide) -->
+    
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
 
     <script>
-      // Req 4: Color changer (from workshop)
       AFRAME.registerComponent('color-changer', {
         init: function () {
           const colors = ['#EF2D5E', '#FFC65D', '#4CC3D9', '#7BC8A4', '#9B59B6'];
@@ -24,7 +23,6 @@
         }
       });
 
-      // Req 4: New custom component (Volcano erupts/grows)
       AFRAME.registerComponent('erupt-on-tap', {
         init: function () {
           let isErupted = false;
@@ -39,17 +37,16 @@
         }
       });
 
-      // Req 5: Status Banner (From workshop)
       AFRAME.registerComponent('marker-status', {
         init: function () {
           const banner = document.querySelector('#status');
           this.el.addEventListener('markerFound', () => {
             banner.textContent = 'Marker FOUND - Tap the volcano!';
-            banner.style.background = '#2E7D32'; // Green
+            banner.style.background = '#2E7D32';
           });
           this.el.addEventListener('markerLost', () => {
             banner.textContent = 'Marker LOST - point camera at Hiro marker';
-            banner.style.background = '#C62828'; // Red
+            banner.style.background = '#C62828';
           });
         }
       });
@@ -66,40 +63,32 @@
     </style>
   </head>
   <body>
-    <!-- Req 5: Banner -->
-    <div id="status">Looking for marker...</div>
+    
+    <div id="status" role="status" aria-live="polite">Looking for marker...</div>
 
     <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
       
       <a-assets timeout="20000">
-        <!-- Req 3: Non-duck 3D model (Lantern) -->
+        
         <a-asset-item id="lantern-model" src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Lantern/glTF-Binary/Lantern.glb"></a-asset-item>
       </a-assets>
 
       <a-marker preset="hiro" marker-status>
-        
-        <!-- Req 1: 4 objects, 2+ primitives -->
-        <!-- Object 1: Ground Plane -->
+
         <a-plane position="0 0 0" rotation="-90 0 0" width="2" height="2" color="#2C3E50"></a-plane>
-        
-        <!-- Object 2: Volcano (Cone) - Tappable -->
+
         <a-cone class="clickable" erupt-on-tap position="0 0.3 0" radius-bottom="0.6" radius-top="0.1" height="0.6" color="#8B4513"></a-cone>
 
-        <!-- Req 2: Animation (Rotation) - Object 3: Flying Debris (Box) -->
         <a-box position="-0.5 0.6 0" width="0.1" height="0.1" depth="0.1" color="#E74C3C" animation="property: rotation; to: 0 360 0; dur: 3000; loop: true; easing: linear"></a-box>
-        
-        <!-- Req 2: Animation (Position) - Object 4: Lava Bomb (Sphere) - Tappable -->
+
         <a-sphere class="clickable" color-changer position="0.5 0.5 0" radius="0.1" color="#FF4500" animation="property: position; from: 0.5 0.3 0; to: 0.5 0.9 0; dir: alternate; dur: 800; loop: true; easing: easeInOutQuad"></a-sphere>
 
-        <!-- Req 3: 3D Model -->
         <a-entity gltf-model="#lantern-model" position="-0.6 0.05 0.4" scale="0.05 0.05 0.05"></a-entity>
 
-        <!-- Req 1: Text Label -->
         <a-text value="Volcano Eruption!" position="0 1.1 0" align="center" width="4" color="#FFFFFF"></a-text>
 
       </a-marker>
 
-      <!-- Raycaster for tapping on mobile -->
       <a-entity camera cursor="rayOrigin: mouse" raycaster="objects: .clickable; far: 1000"></a-entity>
     </a-scene>
   </body>
